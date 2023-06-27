@@ -46,7 +46,7 @@ You'll also use our custom-built GraphQL query service [`@subql/query`](https://
 * [`@subql/node`](packages/node)
 * [`@subql/query`](packages/query)
 * [`@subql/common`](packages/common)
-* [`@subql/common-substrate`](packages/common-substrate)
+* [`@subql/common-substrate`](packages/common-eos)
 * [`@subql/types`](packages/types)
 * [`@subql/validator`](packages/validator)
 

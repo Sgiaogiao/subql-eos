@@ -12,7 +12,7 @@
   },
   "references": [
     {"path": "../common"},
-    {"path": "../common-substrate"},
+    {"path": "../common-eos"},
     {"path": "../utils"},
     {"path": "../validator"}
   ],

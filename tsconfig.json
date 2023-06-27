@@ -38,7 +38,7 @@
   "references": [
     {"path": "packages/cli"},
     {"path": "packages/common"},
-    {"path": "packages/common-substrate"},
+    {"path": "packages/common-eos"},
     {"path": "packages/node"},
     {"path": "packages/node-core"},
     {"path": "packages/types"},

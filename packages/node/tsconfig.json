@@ -9,7 +9,7 @@
   },
   "references": [
     { "path": "../common" },
-    { "path": "../common-substrate" },
+    { "path": "../common-eos"},
     { "path": "../node-core" },
     { "path": "../types" },
     { "path": "../utils" },
