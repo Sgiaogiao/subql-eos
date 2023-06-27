@@ -4,23 +4,23 @@
 import {getManifestPath, loadFromJsonOrYaml} from '@subql/common';
 import {plainToClass} from 'class-transformer';
 import {validateSync} from 'class-validator';
-// import {NodeVM, VMScript} from 'vm2';
 import {ChainTypes} from './models';
-import {SubstrateProjectManifestVersioned, VersionedProjectManifest} from './versioned';
+import {EosProjectManifestVersioned, VersionedProjectManifest} from './versioned';
 
-export function parseSubstrateProjectManifest(raw: unknown): SubstrateProjectManifestVersioned {
-  const projectManifest = new SubstrateProjectManifestVersioned(raw as VersionedProjectManifest);
+export function parseEosProjectManifest(raw: unknown): EosProjectManifestVersioned {
+  const projectManifest = new EosProjectManifestVersioned(raw as VersionedProjectManifest);
   projectManifest.validate();
   return projectManifest;
 }
 
-export function loadSubstrateProjectManifest(file: string): SubstrateProjectManifestVersioned {
+export function loadEosProjectManifest(file: string): EosProjectManifestVersioned {
   const doc = loadFromJsonOrYaml(getManifestPath(file));
-  const projectManifest = new SubstrateProjectManifestVersioned(doc as VersionedProjectManifest);
+  const projectManifest = new EosProjectManifestVersioned(doc as VersionedProjectManifest);
   projectManifest.validate();
   return projectManifest;
 }
 
+// 此部分意义不明，后续留待研究
 export function parseChainTypes(raw: unknown): ChainTypes {
   const chainTypes = plainToClass(ChainTypes, raw);
   if (
