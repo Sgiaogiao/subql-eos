@@ -16,7 +16,7 @@ import {
   SubstrateEventHandler,
   SubstrateHandlerKind,
   SubstrateNetworkFilter,
-  SubstrateRuntimeDatasource,
+  EosRuntimeDatasource,
   SubstrateRuntimeHandler,
   SubstrateRuntimeHandlerFilter,
   SubstrateCustomDatasource,
@@ -161,7 +161,7 @@ export class SubqlNetworkFilterImpl implements SubstrateNetworkFilter {
   specName?: string;
 }
 
-export class RuntimeDataSourceBase implements SubstrateRuntimeDatasource {
+export class RuntimeDataSourceBase implements EosRuntimeDatasource {
   @IsEnum(SubstrateDatasourceKind, {groups: [SubstrateDatasourceKind.Runtime]})
   kind: SubstrateDatasourceKind.Runtime;
   @Type(() => RuntimeMapping)

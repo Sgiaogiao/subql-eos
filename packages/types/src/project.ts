@@ -90,7 +90,7 @@ interface ISubstrateDatasource<M extends SubstrateMapping, F extends SubstrateNe
   mapping: M;
 }
 
-export interface SubstrateRuntimeDatasource<
+export interface EosRuntimeDatasource<
   M extends SubstrateMapping<SubstrateRuntimeHandler> = SubstrateMapping<SubstrateRuntimeHandler>
 > extends ISubstrateDatasource<M> {
   kind: SubstrateDatasourceKind.Runtime;
@@ -100,7 +100,7 @@ export interface SubstrateNetworkFilter {
   specName?: string;
 }
 
-export type SubstrateDatasource = SubstrateRuntimeDatasource | SubstrateCustomDatasource;
+export type EosDatasource = EosRuntimeDatasource | SubstrateCustomDatasource;
 
 export interface FileReference {
   file: string;

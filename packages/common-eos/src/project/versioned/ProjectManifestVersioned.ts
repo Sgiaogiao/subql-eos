@@ -1,9 +1,9 @@
 // Copyright 2020-2022 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import {SubstrateDatasource} from '@subql/types';
+import {EosDatasource} from '@subql/types';
 import {plainToClass} from 'class-transformer';
-import {ISubstrateProjectManifest} from '../types';
+import {IEosProjectManifest} from '../types';
 import {ProjectManifestV0_0_1Impl, RuntimeDataSourceV0_0_1} from './v0_0_1';
 import {ProjectManifestV0_2_0Impl} from './v0_2_0';
 import {ProjectManifestV0_2_1Impl} from './v0_2_1';
@@ -12,43 +12,24 @@ import {ProjectManifestV1_0_0Impl} from './v1_0_0';
 export type VersionedProjectManifest = {specVersion: string};
 
 /* Retain support for all versions here to continue support for migrations */
-const SUBSTRATE_SUPPORTED_VERSIONS = {
-  '0.0.1': ProjectManifestV0_0_1Impl,
-  '0.2.0': ProjectManifestV0_2_0Impl,
-  '0.2.1': ProjectManifestV0_2_1Impl,
-  '0.3.0': ProjectManifestV0_3_0Impl,
-  '1.0.0': ProjectManifestV1_0_0Impl,
+// 版本控制，具体实现最后再确定
+const EOS_SUPPORTED_VERSIONS = {
+  '0.0.1': ProjectManifestV0_0_1Impl  //待确定
 };
 
-type Versions = keyof typeof SUBSTRATE_SUPPORTED_VERSIONS;
+type Versions = keyof typeof EOS_SUPPORTED_VERSIONS;
 
-type ProjectManifestImpls = InstanceType<typeof SUBSTRATE_SUPPORTED_VERSIONS[Versions]>;
+type ProjectManifestImpls = InstanceType<typeof EOS_SUPPORTED_VERSIONS[Versions]>;
 
-export function manifestIsV0_0_1(manifest: ISubstrateProjectManifest): manifest is ProjectManifestV0_0_1Impl {
+export function manifestIsV0_0_1(manifest: IEosProjectManifest): manifest is ProjectManifestV0_0_1Impl {
   return manifest.specVersion === '0.0.1';
 }
 
-export function manifestIsV0_2_0(manifest: ISubstrateProjectManifest): manifest is ProjectManifestV0_2_0Impl {
-  return manifest.specVersion === '0.2.0';
-}
-
-export function manifestIsV0_2_1(manifest: ISubstrateProjectManifest): manifest is ProjectManifestV0_2_1Impl {
-  return manifest.specVersion === '0.2.1';
-}
-
-export function manifestIsV0_3_0(manifest: ISubstrateProjectManifest): manifest is ProjectManifestV0_3_0Impl {
-  return manifest.specVersion === '0.3.0';
-}
-
-export function manifestIsV1_0_0(manifest: ISubstrateProjectManifest): manifest is ProjectManifestV1_0_0Impl {
-  return manifest.specVersion === '1.0.0';
-}
-
-export class SubstrateProjectManifestVersioned implements ISubstrateProjectManifest {
+export class EosProjectManifestVersioned implements IEosProjectManifest {
   private _impl: ProjectManifestImpls;
 
   constructor(projectManifest: VersionedProjectManifest) {
-    const klass = SUBSTRATE_SUPPORTED_VERSIONS[projectManifest.specVersion as Versions];
+    const klass = EOS_SUPPORTED_VERSIONS[projectManifest.specVersion as Versions];
     if (!klass) {
       throw new Error('specVersion not supported for project manifest file');
     }
@@ -67,38 +48,6 @@ export class SubstrateProjectManifestVersioned implements ISubstrateProjectManif
     return this._impl as ProjectManifestV0_0_1Impl;
   }
 
-  get isV0_2_0(): boolean {
-    return this.specVersion === '0.2.0';
-  }
-
-  get asV0_2_0(): ProjectManifestV0_2_0Impl {
-    return this._impl as ProjectManifestV0_2_0Impl;
-  }
-
-  get isV0_2_1(): boolean {
-    return this.specVersion === '0.2.1';
-  }
-
-  get asV0_2_1(): ProjectManifestV0_2_1Impl {
-    return this._impl as ProjectManifestV0_2_1Impl;
-  }
-
-  get isV0_3_0(): boolean {
-    return this.specVersion === '0.3.0';
-  }
-
-  get asV0_3_0(): ProjectManifestV0_3_0Impl {
-    return this._impl as ProjectManifestV0_3_0Impl;
-  }
-
-  get isV1_0_0(): boolean {
-    return this.specVersion === '1.0.0';
-  }
-
-  get asV1_0_0(): ProjectManifestV1_0_0Impl {
-    return this._impl as ProjectManifestV1_0_0Impl;
-  }
-
   toDeployment(): string | undefined {
     return this._impl.toDeployment();
   }
@@ -107,7 +56,7 @@ export class SubstrateProjectManifestVersioned implements ISubstrateProjectManif
     return this._impl.validate();
   }
 
-  get dataSources(): (SubstrateDatasource | RuntimeDataSourceV0_0_1)[] {
+  get dataSources(): (EosDatasource | RuntimeDataSourceV0_0_1)[] {
     return this._impl.dataSources;
   }
 

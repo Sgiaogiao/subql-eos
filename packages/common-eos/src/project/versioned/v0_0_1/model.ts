@@ -21,10 +21,10 @@ import {
   validateSync,
 } from 'class-validator';
 import {ChainTypes, SubqlNetworkFilterImpl, EventHandler, CallHandler, BlockHandler} from '../../models';
-import {SubstrateProjectNetworkConfig} from '../../types';
+import {EosProjectNetworkConfig} from '../../types';
 import {ManifestV0_0_1Mapping, ProjectManifestV0_0_1, RuntimeDataSourceV0_0_1} from './types';
 
-export class ProjectNetworkV0_0_1 extends ChainTypes implements SubstrateProjectNetworkConfig {
+export class ProjectNetworkV0_0_1 extends ChainTypes implements EosProjectNetworkConfig {
   @IsString({each: true})
   endpoint: string[];
   @IsString()
