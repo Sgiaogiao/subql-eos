@@ -4,7 +4,7 @@
 import {getManifestPath, loadFromJsonOrYaml} from '@subql/common';
 import {plainToClass} from 'class-transformer';
 import {validateSync} from 'class-validator';
-import {ChainTypes} from './models';
+// import {ChainTypes} from './models';
 import {EosProjectManifestVersioned, VersionedProjectManifest} from './versioned';
 
 export function parseEosProjectManifest(raw: unknown): EosProjectManifestVersioned {
