@@ -1,27 +1,29 @@
 // Copyright 2020-2022 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// 波卡独有，是否需要保留？
 import {RegisteredTypes, RegistryTypes, OverrideModuleType, OverrideBundleType} from '@polkadot/types/types';
 
 import {BaseMapping, FileReference} from '@subql/common';
 import {
-  CustomDataSourceAsset as SubstrateCustomDataSourceAsset,
-  SubstrateBlockFilter,
+  CustomDataSourceAsset as EosCustomDataSourceAsset,
+  EosBlockFilter,
   SubstrateBlockHandler,
   SubstrateCallFilter,
   SubstrateCallHandler,
   SubstrateCustomHandler,
   SubstrateDatasourceKind,
-  SubstrateEventFilter,
+  SubstrateEventFilter, //1
   SubstrateEventHandler,
   SubstrateHandlerKind,
-  SubstrateNetworkFilter,
+  EosNetworkFilter,
   EosRuntimeDatasource,
   SubstrateRuntimeHandler,
   SubstrateRuntimeHandlerFilter,
-  SubstrateCustomDatasource,
+  EosCustomDatasource,
 } from '@subql/types';
 import {plainToClass, Transform, Type} from 'class-transformer';
+//  验证器，可以都放进去
 import {
   ArrayMaxSize,
   IsArray,
@@ -34,11 +36,14 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class BlockFilter implements SubstrateBlockFilter {
-  @IsOptional()
-  @IsArray()
-  @ArrayMaxSize(2)
-  specVersion?: [number, number];
+//2023.6.28 删掉了版本控制的部分
+export class BlockFilter implements EosBlockFilter {
+  // @IsOptional()
+  // @IsArray()
+  // @ArrayMaxSize(2)
+  // specVersion?: [number, number];
+  // 上面是波卡独有，下面是一样的，因为初始项目加入的版本控制的功能，所以要多一些代码内容，这些内容后面要删掉
+  // 在project.ts中删掉了版本控制的部分，上面这些可以直接删掉了
   @IsOptional()
   @IsInt()
   modulo?: number;
@@ -46,7 +51,9 @@ export class BlockFilter implements SubstrateBlockFilter {
   @IsString()
   timestamp?: string;
 }
-
+//2023.6.28
+// 在filter中event、call应该是可以拆开写，在eth中拆开了event call，cosmos拆开了call
+// eos应该怎么做？这些与什么有关？
 export class EventFilter extends BlockFilter implements SubstrateEventFilter {
   @IsOptional()
   @IsString()
@@ -56,23 +63,24 @@ export class EventFilter extends BlockFilter implements SubstrateEventFilter {
   method?: string;
 }
 
-export class ChainTypes implements RegisteredTypes {
-  @IsObject()
-  @IsOptional()
-  types?: RegistryTypes;
-  @IsObject()
-  @IsOptional()
-  typesAlias?: Record<string, OverrideModuleType>;
-  @IsObject()
-  @IsOptional()
-  typesBundle?: OverrideBundleType;
-  @IsObject()
-  @IsOptional()
-  typesChain?: Record<string, RegistryTypes>;
-  @IsObject()
-  @IsOptional()
-  typesSpec?: Record<string, RegistryTypes>;
-}
+// chaintype相关的内容可以删掉了
+// export class ChainTypes implements RegisteredTypes {
+//   @IsObject()
+//   @IsOptional()
+//   types?: RegistryTypes;
+//   @IsObject()
+//   @IsOptional()
+//   typesAlias?: Record<string, OverrideModuleType>;
+//   @IsObject()
+//   @IsOptional()
+//   typesBundle?: OverrideBundleType;
+//   @IsObject()
+//   @IsOptional()
+//   typesChain?: Record<string, RegistryTypes>;
+//   @IsObject()
+//   @IsOptional()
+//   typesSpec?: Record<string, RegistryTypes>;
+// }
 
 export class CallFilter extends EventFilter implements SubstrateCallFilter {
   @IsOptional()
@@ -84,7 +92,7 @@ export class BlockHandler implements SubstrateBlockHandler {
   @IsOptional()
   @ValidateNested()
   @Type(() => BlockFilter)
-  filter?: SubstrateBlockFilter;
+  filter?: EosBlockFilter;
   @IsEnum(SubstrateHandlerKind, {groups: [SubstrateHandlerKind.Block]})
   kind: SubstrateHandlerKind.Block;
   @IsString()
@@ -155,7 +163,7 @@ export class CustomMapping implements BaseMapping<Record<string, unknown>, Subst
   file: string;
 }
 
-export class SubqlNetworkFilterImpl implements SubstrateNetworkFilter {
+export class SubqlNetworkFilterImpl implements EosNetworkFilter {
   @IsString()
   @IsOptional()
   specName?: string;
@@ -173,7 +181,7 @@ export class RuntimeDataSourceBase implements EosRuntimeDatasource {
   @IsOptional()
   @ValidateNested()
   @Type(() => SubqlNetworkFilterImpl)
-  filter?: SubstrateNetworkFilter;
+  filter?: EosNetworkFilter;
 }
 
 export class FileReferenceImpl implements FileReference {
@@ -181,8 +189,8 @@ export class FileReferenceImpl implements FileReference {
   file: string;
 }
 
-export class CustomDataSourceBase<K extends string, T extends SubstrateNetworkFilter, M extends CustomMapping, O = any>
-  implements SubstrateCustomDatasource<K, T, M, O>
+export class CustomDataSourceBase<K extends string, T extends EosNetworkFilter, M extends CustomMapping, O = any>
+  implements EosCustomDatasource<K, T, M, O>
 {
   @IsString()
   kind: K;
@@ -194,7 +202,7 @@ export class CustomDataSourceBase<K extends string, T extends SubstrateNetworkFi
   startBlock?: number;
   @Type(() => FileReferenceImpl)
   @ValidateNested({each: true})
-  assets: Map<string, SubstrateCustomDataSourceAsset>;
+  assets: Map<string, EosCustomDataSourceAsset>;
   @Type(() => FileReferenceImpl)
   @IsObject()
   processor: FileReference;

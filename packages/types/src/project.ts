@@ -22,7 +22,7 @@ export type RuntimeHandlerInputMap<T extends AnyTuple = AnyTuple> = {
 };
 
 type RuntimeFilterMap = {
-  [SubstrateHandlerKind.Block]: SubstrateNetworkFilter;
+  [SubstrateHandlerKind.Block]: EosNetworkFilter;
   [SubstrateHandlerKind.Event]: SubstrateEventFilter;
   [SubstrateHandlerKind.Call]: SubstrateCallFilter;
 };
@@ -40,22 +40,35 @@ export interface ProjectManifest {
   };
 
   bypassBlocks?: number[];
-  dataSources: SubstrateDatasource[];
+  dataSources: EosDatasource[];
 }
 
 // [startSpecVersion?, endSpecVersion?] closed range
-export type SpecVersionRange = [number, number];
+// eos不需要版本控制，写一个版本即可
+// export type SpecVersionRange = [number, number];
 
-interface SubstrateBaseHandlerFilter {
-  specVersion?: SpecVersionRange;
-}
+// interface SubstrateBaseHandlerFilter {
+//   specVersion?: SpecVersionRange;
+// }
 
-export interface SubstrateBlockFilter extends SubstrateBaseHandlerFilter {
+//初始项目的一些文件与eth有所区别，个人认为后面还是要根据eth、cosmos这些扩展链的代码构造来写
+//cosmos与eth也有一些区别，eth的写法应该更标准一些
+//这个接口多了一个继承关系，而且波卡项目的继承关系明显要多余其他扩展链，大多都是用于版本控制的
+//这里的版本控制可以去掉
+// export interface SubstrateBlockFilter extends SubstrateBaseHandlerFilter {
+//   modulo?: number;
+//   timestamp?: string;
+// }
+export interface EosBlockFilter {
   modulo?: number;
   timestamp?: string;
 }
 
-export interface SubstrateEventFilter extends SubstrateBaseHandlerFilter {
+// export interface SubstrateEventFilter extends SubstrateBaseHandlerFilter {
+//   module?: string;
+//   method?: string;
+// }
+export interface SubstrateEventFilter {
   module?: string;
   method?: string;
 }
@@ -64,7 +77,7 @@ export interface SubstrateCallFilter extends SubstrateEventFilter {
   success?: boolean;
 }
 
-export type SubstrateBlockHandler = SubstrateCustomHandler<SubstrateHandlerKind.Block, SubstrateBlockFilter>;
+export type SubstrateBlockHandler = SubstrateCustomHandler<SubstrateHandlerKind.Block, EosBlockFilter>;
 export type SubstrateCallHandler = SubstrateCustomHandler<SubstrateHandlerKind.Call, SubstrateCallFilter>;
 export type SubstrateEventHandler = SubstrateCustomHandler<SubstrateHandlerKind.Event, SubstrateEventFilter>;
 
@@ -76,13 +89,13 @@ export interface SubstrateCustomHandler<K extends string = string, F = Record<st
 
 export type SubstrateRuntimeHandler = SubstrateBlockHandler | SubstrateCallHandler | SubstrateEventHandler;
 export type SubstrateHandler = SubstrateRuntimeHandler | SubstrateCustomHandler<string, unknown>;
-export type SubstrateRuntimeHandlerFilter = SubstrateBlockFilter | SubstrateCallFilter | SubstrateEventFilter;
+export type SubstrateRuntimeHandlerFilter = EosBlockFilter | SubstrateCallFilter | SubstrateEventFilter;
 
 export interface SubstrateMapping<T extends SubstrateHandler = SubstrateHandler> extends FileReference {
   handlers: T[];
 }
 
-interface ISubstrateDatasource<M extends SubstrateMapping, F extends SubstrateNetworkFilter = SubstrateNetworkFilter> {
+interface ISubstrateDatasource<M extends SubstrateMapping, F extends EosNetworkFilter = EosNetworkFilter> {
   name?: string;
   kind: string;
   filter?: F;
@@ -96,11 +109,11 @@ export interface EosRuntimeDatasource<
   kind: SubstrateDatasourceKind.Runtime;
 }
 
-export interface SubstrateNetworkFilter {
+export interface EosNetworkFilter {
   specName?: string;
 }
 
-export type EosDatasource = EosRuntimeDatasource | SubstrateCustomDatasource;
+export type EosDatasource = EosRuntimeDatasource | EosCustomDatasource;
 
 export interface FileReference {
   file: string;
@@ -110,9 +123,9 @@ export type CustomDataSourceAsset = FileReference;
 
 export type Processor<O = any> = FileReference & {options?: O};
 
-export interface SubstrateCustomDatasource<
+export interface EosCustomDatasource<
   K extends string = string,
-  T extends SubstrateNetworkFilter = SubstrateNetworkFilter,
+  T extends EosNetworkFilter = EosNetworkFilter,
   M extends SubstrateMapping = SubstrateMapping<SubstrateCustomHandler>,
   O = any
 > extends ISubstrateDatasource<M, T> {
@@ -127,7 +140,7 @@ export interface HandlerInputTransformer_0_0_0<
   T extends SubstrateHandlerKind,
   E,
   IT extends AnyTuple,
-  DS extends SubstrateCustomDatasource = SubstrateCustomDatasource
+  DS extends EosCustomDatasource = EosCustomDatasource
 > {
   (input: RuntimeHandlerInputMap<IT>[T], ds: DS, api: ApiPromise, assets?: Record<string, string>): Promise<E>; //  | SubstrateBuiltinDataSource
 }
@@ -137,7 +150,7 @@ export interface HandlerInputTransformer_1_0_0<
   F,
   E,
   IT extends AnyTuple,
-  DS extends SubstrateCustomDatasource = SubstrateCustomDatasource
+  DS extends EosCustomDatasource = EosCustomDatasource
 > {
   (params: {
     input: RuntimeHandlerInputMap<IT>[T];
@@ -150,10 +163,10 @@ export interface HandlerInputTransformer_1_0_0<
 
 type SecondLayerHandlerProcessorArray<
   K extends string,
-  F extends SubstrateNetworkFilter,
+  F extends EosNetworkFilter,
   T,
   IT extends AnyTuple = AnyTuple,
-  DS extends SubstrateCustomDatasource<K, F> = SubstrateCustomDatasource<K, F>
+  DS extends EosCustomDatasource<K, F> = EosCustomDatasource<K, F>
 > =
   | SecondLayerHandlerProcessor<SubstrateHandlerKind.Block, F, T, IT, DS>
   | SecondLayerHandlerProcessor<SubstrateHandlerKind.Call, F, T, IT, DS>
@@ -161,8 +174,8 @@ type SecondLayerHandlerProcessorArray<
 
 export interface SubstrateDatasourceProcessor<
   K extends string,
-  F extends SubstrateNetworkFilter,
-  DS extends SubstrateCustomDatasource<K, F> = SubstrateCustomDatasource<K, F>,
+  F extends EosNetworkFilter,
+  DS extends EosCustomDatasource<K, F> = EosCustomDatasource<K, F>,
   P extends Record<string, SecondLayerHandlerProcessorArray<K, F, any, any, DS>> = Record<
     string,
     SecondLayerHandlerProcessorArray<K, F, any, any, DS>
@@ -188,7 +201,7 @@ export interface DictionaryQueryEntry {
 interface SecondLayerHandlerProcessorBase<
   K extends SubstrateHandlerKind,
   F,
-  DS extends SubstrateCustomDatasource = SubstrateCustomDatasource
+  DS extends EosCustomDatasource = EosCustomDatasource
 > {
   baseHandlerKind: K;
   baseFilter: RuntimeFilterMap[K] | RuntimeFilterMap[K][];
@@ -202,7 +215,7 @@ export interface SecondLayerHandlerProcessor_0_0_0<
   F,
   E,
   IT extends AnyTuple = AnyTuple,
-  DS extends SubstrateCustomDatasource = SubstrateCustomDatasource
+  DS extends EosCustomDatasource = EosCustomDatasource
 > extends SecondLayerHandlerProcessorBase<K, F, DS> {
   specVersion: undefined;
   transformer: HandlerInputTransformer_0_0_0<K, E, IT, DS>;
@@ -214,7 +227,7 @@ export interface SecondLayerHandlerProcessor_1_0_0<
   F,
   E,
   IT extends AnyTuple = AnyTuple,
-  DS extends SubstrateCustomDatasource = SubstrateCustomDatasource
+  DS extends EosCustomDatasource = EosCustomDatasource
 > extends SecondLayerHandlerProcessorBase<K, F, DS> {
   specVersion: '1.0.0';
   transformer: HandlerInputTransformer_1_0_0<K, F, E, IT, DS>;
@@ -226,5 +239,5 @@ export type SecondLayerHandlerProcessor<
   F,
   E,
   IT extends AnyTuple = AnyTuple,
-  DS extends SubstrateCustomDatasource = SubstrateCustomDatasource
+  DS extends EosCustomDatasource = EosCustomDatasource
 > = SecondLayerHandlerProcessor_0_0_0<K, F, E, IT, DS> | SecondLayerHandlerProcessor_1_0_0<K, F, E, IT, DS>;
