@@ -9,11 +9,11 @@ import {
   CustomDataSourceAsset as EosCustomDataSourceAsset,
   EosBlockFilter,
   SubstrateBlockHandler,
-  SubstrateCallFilter,
+  EosCallFilter,
   SubstrateCallHandler,
   SubstrateCustomHandler,
   SubstrateDatasourceKind,
-  SubstrateEventFilter, //1
+  EosEventFilter, //1
   SubstrateEventHandler,
   SubstrateHandlerKind,
   EosNetworkFilter,
@@ -23,7 +23,7 @@ import {
   EosCustomDatasource,
 } from '@subql/types';
 import {plainToClass, Transform, Type} from 'class-transformer';
-//  验证器，可以都放进去
+//  验证器，要适配eos的相关验证
 import {
   ArrayMaxSize,
   IsArray,
@@ -54,7 +54,7 @@ export class BlockFilter implements EosBlockFilter {
 //2023.6.28
 // 在filter中event、call应该是可以拆开写，在eth中拆开了event call，cosmos拆开了call
 // eos应该怎么做？这些与什么有关？
-export class EventFilter extends BlockFilter implements SubstrateEventFilter {
+export class EventFilter extends BlockFilter implements EosEventFilter {
   @IsOptional()
   @IsString()
   module?: string;
@@ -82,12 +82,13 @@ export class EventFilter extends BlockFilter implements SubstrateEventFilter {
 //   typesSpec?: Record<string, RegistryTypes>;
 // }
 
-export class CallFilter extends EventFilter implements SubstrateCallFilter {
+export class CallFilter extends EventFilter implements EosCallFilter {
   @IsOptional()
   @IsBoolean()
   success?: boolean;
 }
 
+// 代码类似
 export class BlockHandler implements SubstrateBlockHandler {
   @IsOptional()
   @ValidateNested()
@@ -103,7 +104,7 @@ export class CallHandler implements SubstrateCallHandler {
   @IsOptional()
   @ValidateNested()
   @Type(() => CallFilter)
-  filter?: SubstrateCallFilter;
+  filter?: EosCallFilter;
   @IsEnum(SubstrateHandlerKind, {groups: [SubstrateHandlerKind.Call]})
   kind: SubstrateHandlerKind.Call;
   @IsString()
@@ -114,7 +115,7 @@ export class EventHandler implements SubstrateEventHandler {
   @IsOptional()
   @ValidateNested()
   @Type(() => EventFilter)
-  filter?: SubstrateEventFilter;
+  filter?: EosEventFilter;
   @IsEnum(SubstrateHandlerKind, {groups: [SubstrateHandlerKind.Event]})
   kind: SubstrateHandlerKind.Event;
   @IsString()

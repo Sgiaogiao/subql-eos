@@ -23,8 +23,8 @@ export type RuntimeHandlerInputMap<T extends AnyTuple = AnyTuple> = {
 
 type RuntimeFilterMap = {
   [SubstrateHandlerKind.Block]: EosNetworkFilter;
-  [SubstrateHandlerKind.Event]: SubstrateEventFilter;
-  [SubstrateHandlerKind.Call]: SubstrateCallFilter;
+  [SubstrateHandlerKind.Event]: EosEventFilter;
+  [SubstrateHandlerKind.Call]: EosCallFilter;
 };
 
 export interface ProjectManifest {
@@ -68,18 +68,18 @@ export interface EosBlockFilter {
 //   module?: string;
 //   method?: string;
 // }
-export interface SubstrateEventFilter {
+export interface EosEventFilter {
   module?: string;
   method?: string;
 }
 
-export interface SubstrateCallFilter extends SubstrateEventFilter {
+export interface EosCallFilter extends EosEventFilter {
   success?: boolean;
 }
 
 export type SubstrateBlockHandler = SubstrateCustomHandler<SubstrateHandlerKind.Block, EosBlockFilter>;
-export type SubstrateCallHandler = SubstrateCustomHandler<SubstrateHandlerKind.Call, SubstrateCallFilter>;
-export type SubstrateEventHandler = SubstrateCustomHandler<SubstrateHandlerKind.Event, SubstrateEventFilter>;
+export type SubstrateCallHandler = SubstrateCustomHandler<SubstrateHandlerKind.Call, EosCallFilter>;
+export type SubstrateEventHandler = SubstrateCustomHandler<SubstrateHandlerKind.Event, EosEventFilter>;
 
 export interface SubstrateCustomHandler<K extends string = string, F = Record<string, unknown>> {
   handler: string;
@@ -89,7 +89,7 @@ export interface SubstrateCustomHandler<K extends string = string, F = Record<st
 
 export type SubstrateRuntimeHandler = SubstrateBlockHandler | SubstrateCallHandler | SubstrateEventHandler;
 export type SubstrateHandler = SubstrateRuntimeHandler | SubstrateCustomHandler<string, unknown>;
-export type SubstrateRuntimeHandlerFilter = EosBlockFilter | SubstrateCallFilter | SubstrateEventFilter;
+export type SubstrateRuntimeHandlerFilter = EosBlockFilter | EosCallFilter | EosEventFilter;
 
 export interface SubstrateMapping<T extends SubstrateHandler = SubstrateHandler> extends FileReference {
   handlers: T[];
