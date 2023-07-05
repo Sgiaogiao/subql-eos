@@ -8,18 +8,18 @@ import {BaseMapping, FileReference} from '@subql/common';
 import {
   CustomDataSourceAsset as EosCustomDataSourceAsset,
   EosBlockFilter,
-  SubstrateBlockHandler,
+  EosBlockHandler,
   EosCallFilter,
-  SubstrateCallHandler,
-  SubstrateCustomHandler,
-  SubstrateDatasourceKind,
+  EosCallHandler,
+  EosCustomHandler,
+  EosDatasourceKind,
   EosEventFilter, //1
-  SubstrateEventHandler,
-  SubstrateHandlerKind,
+  EosEventHandler,
+  EosHandlerKind,
   EosNetworkFilter,
   EosRuntimeDatasource,
-  SubstrateRuntimeHandler,
-  SubstrateRuntimeHandlerFilter,
+  EosRuntimeHandler,
+  EosRuntimeHandlerFilter,
   EosCustomDatasource,
 } from '@subql/types';
 import {plainToClass, Transform, Type} from 'class-transformer';
@@ -89,40 +89,40 @@ export class CallFilter extends EventFilter implements EosCallFilter {
 }
 
 // 代码类似
-export class BlockHandler implements SubstrateBlockHandler {
+export class BlockHandler implements EosBlockHandler {
   @IsOptional()
   @ValidateNested()
   @Type(() => BlockFilter)
   filter?: EosBlockFilter;
-  @IsEnum(SubstrateHandlerKind, {groups: [SubstrateHandlerKind.Block]})
-  kind: SubstrateHandlerKind.Block;
+  @IsEnum(EosHandlerKind, {groups: [EosHandlerKind.Block]})
+  kind: EosHandlerKind.Block;
   @IsString()
   handler: string;
 }
 
-export class CallHandler implements SubstrateCallHandler {
+export class CallHandler implements EosCallHandler {
   @IsOptional()
   @ValidateNested()
   @Type(() => CallFilter)
   filter?: EosCallFilter;
-  @IsEnum(SubstrateHandlerKind, {groups: [SubstrateHandlerKind.Call]})
-  kind: SubstrateHandlerKind.Call;
+  @IsEnum(EosHandlerKind, {groups: [EosHandlerKind.Call]})
+  kind: EosHandlerKind.Call;
   @IsString()
   handler: string;
 }
 
-export class EventHandler implements SubstrateEventHandler {
+export class EventHandler implements EosEventHandler {
   @IsOptional()
   @ValidateNested()
   @Type(() => EventFilter)
   filter?: EosEventFilter;
-  @IsEnum(SubstrateHandlerKind, {groups: [SubstrateHandlerKind.Event]})
-  kind: SubstrateHandlerKind.Event;
+  @IsEnum(EosHandlerKind, {groups: [EosHandlerKind.Event]})
+  kind: EosHandlerKind.Event;
   @IsString()
   handler: string;
 }
 
-export class CustomHandler implements SubstrateCustomHandler {
+export class CustomHandler implements EosCustomHandler {
   @IsString()
   kind: string;
   @IsString()
@@ -132,16 +132,16 @@ export class CustomHandler implements SubstrateCustomHandler {
   filter?: Record<string, unknown>;
 }
 
-export class RuntimeMapping implements BaseMapping<SubstrateRuntimeHandlerFilter, SubstrateRuntimeHandler> {
+export class RuntimeMapping implements BaseMapping<EosRuntimeHandlerFilter, EosRuntimeHandler> {
   @Transform((params) => {
-    const handlers: SubstrateRuntimeHandler[] = params.value;
+    const handlers: EosRuntimeHandler[] = params.value;
     return handlers.map((handler) => {
       switch (handler.kind) {
-        case SubstrateHandlerKind.Event:
+        case EosHandlerKind.Event:
           return plainToClass(EventHandler, handler);
-        case SubstrateHandlerKind.Call:
+        case EosHandlerKind.Call:
           return plainToClass(CallHandler, handler);
-        case SubstrateHandlerKind.Block:
+        case EosHandlerKind.Block:
           return plainToClass(BlockHandler, handler);
         default:
           throw new Error(`handler ${(handler as any).kind} not supported`);
@@ -150,12 +150,12 @@ export class RuntimeMapping implements BaseMapping<SubstrateRuntimeHandlerFilter
   })
   @IsArray()
   @ValidateNested()
-  handlers: SubstrateRuntimeHandler[];
+  handlers: EosRuntimeHandler[];
   @IsString()
   file: string;
 }
 
-export class CustomMapping implements BaseMapping<Record<string, unknown>, SubstrateCustomHandler> {
+export class CustomMapping implements BaseMapping<Record<string, unknown>, EosCustomHandler> {
   @IsArray()
   @Type(() => CustomHandler)
   @ValidateNested()
@@ -171,8 +171,8 @@ export class SubqlNetworkFilterImpl implements EosNetworkFilter {
 }
 
 export class RuntimeDataSourceBase implements EosRuntimeDatasource {
-  @IsEnum(SubstrateDatasourceKind, {groups: [SubstrateDatasourceKind.Runtime]})
-  kind: SubstrateDatasourceKind.Runtime;
+  @IsEnum(EosDatasourceKind, {groups: [EosDatasourceKind.Runtime]})
+  kind: EosDatasourceKind.Runtime;
   @Type(() => RuntimeMapping)
   @ValidateNested()
   mapping: RuntimeMapping;
