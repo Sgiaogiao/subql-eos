@@ -7,20 +7,20 @@ import {RuntimeDataSourceV0_0_1} from '../project/versioned/v0_0_1';
 
 // All of these used to be redefined in this file, re-exporting for simplicity
 export {
-  SubstrateRuntimeHandler,
-  SubstrateCustomHandler,
-  SubstrateHandler,
-  SubstrateHandlerKind,
-  EosDatasource as SubstrateDataSource,
-  SubstrateCustomDatasource as SubstrateCustomDataSource,
-  SubstrateBlockFilter,
-  SubstrateCallFilter,
-  SubstrateEventFilter,
-  SubstrateDatasourceProcessor,
-  SubstrateNetworkFilter,
-  SubstrateRuntimeHandlerFilter,
-  SubstrateDatasourceKind,
-  RuntimeHandlerInputMap as SubstrateRuntimeHandlerInputMap,
+  EosRuntimeHandler,
+  EosCustomHandler,
+  EosHandler,
+  EosHandlerKind,
+  EosDatasource as EosDataSource,
+  EosCustomDatasource as EosCustomDataSource,
+  EosBlockFilter,
+  EosCallFilter,
+  EosEventFilter,
+  EosDatasourceProcessor,
+  EosNetworkFilter,
+  EosRuntimeHandlerFilter,
+  EosDatasourceKind,
+  RuntimeHandlerInputMap as EosRuntimeHandlerInputMap,
 } from '@subql/types';
 
 //make exception for runtime datasource 0.0.1

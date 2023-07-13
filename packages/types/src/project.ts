@@ -171,7 +171,7 @@ type SecondLayerHandlerProcessorArray<
   | SecondLayerHandlerProcessor<EosHandlerKind.Call, F, T, IT, DS>
   | SecondLayerHandlerProcessor<EosHandlerKind.Event, F, T, IT, DS>;
 
-export interface SubstrateDatasourceProcessor<
+export interface EosDatasourceProcessor<
   K extends string,
   F extends EosNetworkFilter,
   DS extends EosCustomDatasource<K, F> = EosCustomDatasource<K, F>,

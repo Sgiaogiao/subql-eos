@@ -3,45 +3,43 @@
 
 import {
   SecondLayerHandlerProcessor,
-  SubstrateCustomDatasource,
-  SubstrateDatasource,
-  SubstrateDatasourceKind,
-  SubstrateHandlerKind,
-  SubstrateNetworkFilter,
-  SubstrateRuntimeDatasource,
+  EosCustomDatasource,
+  EosDatasource,
+  EosDatasourceKind,
+  EosHandlerKind,
+  EosNetworkFilter,
+  EosRuntimeDatasource,
 } from '@subql/types';
 import {gte} from 'semver';
 import {CustomDatasourceTemplate, RuntimeDatasourceTemplate} from '../project/versioned';
 
-export function isBlockHandlerProcessor<T extends SubstrateNetworkFilter, E>(
-  hp: SecondLayerHandlerProcessor<SubstrateHandlerKind, T, unknown>
-): hp is SecondLayerHandlerProcessor<SubstrateHandlerKind.Block, T, E> {
-  return hp.baseHandlerKind === SubstrateHandlerKind.Block;
+export function isBlockHandlerProcessor<T extends EosNetworkFilter, E>(
+  hp: SecondLayerHandlerProcessor<EosHandlerKind, T, unknown>
+): hp is SecondLayerHandlerProcessor<EosHandlerKind.Block, T, E> {
+  return hp.baseHandlerKind === EosHandlerKind.Block;
 }
 
-export function isEventHandlerProcessor<T extends SubstrateNetworkFilter, E>(
-  hp: SecondLayerHandlerProcessor<SubstrateHandlerKind, T, unknown>
-): hp is SecondLayerHandlerProcessor<SubstrateHandlerKind.Event, T, E> {
-  return hp.baseHandlerKind === SubstrateHandlerKind.Event;
+export function isEventHandlerProcessor<T extends EosNetworkFilter, E>(
+  hp: SecondLayerHandlerProcessor<EosHandlerKind, T, unknown>
+): hp is SecondLayerHandlerProcessor<EosHandlerKind.Event, T, E> {
+  return hp.baseHandlerKind === EosHandlerKind.Event;
 }
 
-export function isCallHandlerProcessor<T extends SubstrateNetworkFilter, E>(
-  hp: SecondLayerHandlerProcessor<SubstrateHandlerKind, T, unknown>
-): hp is SecondLayerHandlerProcessor<SubstrateHandlerKind.Call, T, E> {
-  return hp.baseHandlerKind === SubstrateHandlerKind.Call;
+export function isCallHandlerProcessor<T extends EosNetworkFilter, E>(
+  hp: SecondLayerHandlerProcessor<EosHandlerKind, T, unknown>
+): hp is SecondLayerHandlerProcessor<EosHandlerKind.Call, T, E> {
+  return hp.baseHandlerKind === EosHandlerKind.Call;
 }
 
-export function isCustomDs<F extends SubstrateNetworkFilter>(
-  ds: SubstrateDatasource
-): ds is SubstrateCustomDatasource<string, F> {
-  return ds.kind !== SubstrateDatasourceKind.Runtime && !!(ds as SubstrateCustomDatasource<string, F>).processor;
+export function isCustomDs<F extends EosNetworkFilter>(ds: EosDatasource): ds is EosCustomDatasource<string, F> {
+  return ds.kind !== EosDatasourceKind.Runtime && !!(ds as EosCustomDatasource<string, F>).processor;
 }
 
-export function isRuntimeDs(ds: SubstrateDatasource): ds is SubstrateRuntimeDatasource {
-  return ds.kind === SubstrateDatasourceKind.Runtime;
+export function isRuntimeDs(ds: EosDatasource): ds is EosRuntimeDatasource {
+  return ds.kind === EosDatasourceKind.Runtime;
 }
 
-export function isSubstrateTemplates(
+export function isEosTemplates(
   templatesData: any,
   specVersion: string
 ): templatesData is (RuntimeDatasourceTemplate | CustomDatasourceTemplate)[] {

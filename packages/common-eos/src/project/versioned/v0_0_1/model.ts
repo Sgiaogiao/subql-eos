@@ -2,12 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {ProjectManifestBaseImpl} from '@subql/common';
-import {
-  SubstrateDatasourceKind,
-  SubstrateHandlerKind,
-  SubstrateNetworkFilter,
-  SubstrateRuntimeHandler,
-} from '@subql/types';
+import {EosDatasourceKind, EosHandlerKind, EosNetworkFilter, EosRuntimeHandler} from '@subql/types';
 import {plainToClass, Transform, Type} from 'class-transformer';
 import {
   Equals,
@@ -20,11 +15,11 @@ import {
   ValidateNested,
   validateSync,
 } from 'class-validator';
-import {ChainTypes, SubqlNetworkFilterImpl, EventHandler, CallHandler, BlockHandler} from '../../models';
+import {SubqlNetworkFilterImpl, EventHandler, CallHandler, BlockHandler} from '../../models';
 import {EosProjectNetworkConfig} from '../../types';
 import {ManifestV0_0_1Mapping, ProjectManifestV0_0_1, RuntimeDataSourceV0_0_1} from './types';
 
-export class ProjectNetworkV0_0_1 extends ChainTypes implements EosProjectNetworkConfig {
+export class ProjectNetworkV0_0_1 implements EosProjectNetworkConfig {
   @IsString({each: true})
   endpoint: string[];
   @IsString()
@@ -34,14 +29,14 @@ export class ProjectNetworkV0_0_1 extends ChainTypes implements EosProjectNetwor
 
 export class RuntimeMappingV0_0_1 implements ManifestV0_0_1Mapping {
   @Transform((params) => {
-    const handlers: SubstrateRuntimeHandler[] = params.value;
+    const handlers: EosRuntimeHandler[] = params.value;
     return handlers.map((handler) => {
       switch (handler.kind) {
-        case SubstrateHandlerKind.Event:
+        case EosHandlerKind.Event:
           return plainToClass(EventHandler, handler);
-        case SubstrateHandlerKind.Call:
+        case EosHandlerKind.Call:
           return plainToClass(CallHandler, handler);
-        case SubstrateHandlerKind.Block:
+        case EosHandlerKind.Block:
           return plainToClass(BlockHandler, handler);
         default:
           throw new Error(`handler ${(handler as any).kind} not supported`);
@@ -50,14 +45,14 @@ export class RuntimeMappingV0_0_1 implements ManifestV0_0_1Mapping {
   })
   @IsArray()
   @ValidateNested()
-  handlers: SubstrateRuntimeHandler[];
+  handlers: EosRuntimeHandler[];
 }
 
 export class RuntimeDataSourceV0_0_1Impl implements RuntimeDataSourceV0_0_1 {
   @IsString()
   name: string;
-  @IsEnum(SubstrateDatasourceKind, {groups: [SubstrateDatasourceKind.Runtime]})
-  kind: SubstrateDatasourceKind.Runtime;
+  @IsEnum(EosDatasourceKind, {groups: [EosDatasourceKind.Runtime]})
+  kind: EosDatasourceKind.Runtime;
   @Type(() => RuntimeMappingV0_0_1)
   @ValidateNested()
   mapping: RuntimeMappingV0_0_1;
@@ -67,7 +62,7 @@ export class RuntimeDataSourceV0_0_1Impl implements RuntimeDataSourceV0_0_1 {
   @IsOptional()
   @ValidateNested()
   @Type(() => SubqlNetworkFilterImpl)
-  filter?: SubstrateNetworkFilter;
+  filter?: EosNetworkFilter;
 }
 
 export class ProjectManifestV0_0_1Impl extends ProjectManifestBaseImpl<null> implements ProjectManifestV0_0_1 {

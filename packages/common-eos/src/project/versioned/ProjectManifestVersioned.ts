@@ -5,16 +5,12 @@ import {EosDatasource} from '@subql/types';
 import {plainToClass} from 'class-transformer';
 import {IEosProjectManifest} from '../types';
 import {ProjectManifestV0_0_1Impl, RuntimeDataSourceV0_0_1} from './v0_0_1';
-import {ProjectManifestV0_2_0Impl} from './v0_2_0';
-import {ProjectManifestV0_2_1Impl} from './v0_2_1';
-import {ProjectManifestV0_3_0Impl} from './v0_3_0';
-import {ProjectManifestV1_0_0Impl} from './v1_0_0';
 export type VersionedProjectManifest = {specVersion: string};
 
 /* Retain support for all versions here to continue support for migrations */
 // 版本控制，具体实现最后再确定
 const EOS_SUPPORTED_VERSIONS = {
-  '0.0.1': ProjectManifestV0_0_1Impl  //待确定
+  '0.0.1': ProjectManifestV0_0_1Impl, //待确定
 };
 
 type Versions = keyof typeof EOS_SUPPORTED_VERSIONS;
@@ -26,6 +22,7 @@ export function manifestIsV0_0_1(manifest: IEosProjectManifest): manifest is Pro
 }
 
 export class EosProjectManifestVersioned implements IEosProjectManifest {
+  [x: string]: any;
   private _impl: ProjectManifestImpls;
 
   constructor(projectManifest: VersionedProjectManifest) {
@@ -65,7 +62,7 @@ export class EosProjectManifestVersioned implements IEosProjectManifest {
       return this._impl.schema;
     }
 
-    return this._impl.schema.file;
+    return this.ProjectManifestV0_0_1Impl.schema.file;
   }
 
   get specVersion(): string {
